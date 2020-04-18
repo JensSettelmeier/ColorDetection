@@ -9,4 +9,4 @@ matplotlib
 sklearn
 
 # Usage
-clone the repository and execute the test_script_ReflectorSegmentation.py
+clone the repository and execute the test_script_objectSegmentation.py
