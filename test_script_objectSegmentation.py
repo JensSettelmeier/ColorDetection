@@ -3,21 +3,21 @@
 """
 Created on Fri Apr 17 16:24:45 2020
 
-Test script and visualistion of ReflectorSegmentation.
+Test script and visualistion of objectSegmentation.
 
 @author: Jens Settelmeier
 """
 
-from ReflectorSegmentation import reflectorSegmentation
+from objectSegmentation import objectSegmentation
 from matplotlib import pyplot as plt
 import cv2
 import numpy as np
 
 # Path to the image
-imgPath = './Marco/testdata/reflector1.jpg'
+imgPath = './testdata/object1.jpg'
 
 # get the segmentation of the reflector and the coordinates in the picture
-coordinates,segmentation = reflectorSegmentation(imgPath)
+coordinates,segmentation = objectSegmentation(imgPath)
 
 # Plot the segmentation
 plt.figure()

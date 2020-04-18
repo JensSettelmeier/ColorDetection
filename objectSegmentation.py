@@ -6,13 +6,13 @@ Created on Fri Apr 17 15:03:31 2020
 @author: Jens Settelmeier
 
 Function that can find the coordinates of an item, that is surrounded by the 
-color red, as long as there is not to much red in any other regions of the 
+color red, as long as there is not too much red in any other regions of the 
 picture and the light is not too bright.
 Further the object is also segmentated.
 
 Input: imgPath: Path to Image
-Ouput: reflector_coordinates: Coordinates of red surrounded object 
-       reflector_segmentation: Image with the segmentated region of the object
+Ouput: object_coordinates: Coordinates of red surrounded object 
+       object_segmentation: Image with the segmentated region of the object
     
 """
 
@@ -20,7 +20,7 @@ import cv2
 import numpy as np
 from sklearn.cluster import KMeans
 
-def reflectorSegmentation(imgPath):
+def objectSegmentation(imgPath):
 
     img = cv2.imread(imgPath, cv2.IMREAD_UNCHANGED)
     
@@ -41,10 +41,10 @@ def reflectorSegmentation(imgPath):
     normalized = cv2.normalize(hChannel, out, 0, 255, cv2.NORM_MINMAX)
     tolerance = 15;
     
-    ref_reflector = np.max(normalized)  # has to be 255
+    red_col = np.max(normalized)  # has to be 255
     
-    normalized[np.nonzero(normalized>=ref_reflector - tolerance)]=255
-    normalized[np.nonzero(normalized<ref_reflector - tolerance)]=0
+    normalized[np.nonzero(normalized>=red_col - tolerance)]=255
+    normalized[np.nonzero(normalized<red_col - tolerance)]=0
     
     im_floodfill = normalized.copy()
     # construct mask
@@ -53,15 +53,15 @@ def reflectorSegmentation(imgPath):
        
     # fill "holes"
     cv2.floodFill(im_floodfill, mask, (0,0), 255);
-    reflector_segmentation = cv2.bitwise_not(im_floodfill)
+    object_segmentation = cv2.bitwise_not(im_floodfill)
     
-    max_val = np.max(reflector_segmentation) # still 255 if not debug
+    max_val = np.max(object_segmentation) # still 255 if not debug
      
     # find centers with K-Means
-    [row, col] = np.nonzero(reflector_segmentation==max_val)   
+    [row, col] = np.nonzero(object_segmentation==max_val)   
     X = np.transpose(np.array([row,col]))
     kmeans = KMeans(n_clusters=1, random_state=0).fit(X)
     
-    reflector_coordinates = np.round(kmeans.cluster_centers_)
-    reflector_coordinates = np.array([reflector_coordinates[0][1],reflector_coordinates[0][0]])
-    return reflector_coordinates, reflector_segmentation
+    object_coordinates = np.round(kmeans.cluster_centers_)
+    object_coordinates = np.array([object_coordinates[0][1],object_coordinates[0][0]])
+    return object_coordinates, object_segmentation
